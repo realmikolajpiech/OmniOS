@@ -66,4 +66,10 @@
     preload = /etc/backgrounds/omnios-bg.png
     wallpaper = ,/etc/backgrounds/omnios-bg.png
   '';
+
+  
+  systemd.tmpfiles.rules = [
+    "d /home/omnios/.config/hypr 0755 omnios users -"
+    "L+ /home/omnios/.config/hypr/hyprland.conf - - - - /etc/hypr/hyprland.conf"
+  ];
 }
