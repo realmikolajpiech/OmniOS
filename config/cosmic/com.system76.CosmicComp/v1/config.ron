@@ -1,0 +1,10 @@
+(
+    active_window_hint: 0,
+    border_width: 1,
+    gaps: (inner: 8, outer: 8),
+
+    key_bindings: {
+        "Super": Spawn("omni"),
+        "Super+Space": System(Launcher),
+    },
+)

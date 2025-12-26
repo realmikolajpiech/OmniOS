@@ -1,0 +1,9 @@
+PyQt6
+requests
+flask
+simpleeval
+sentence-transformers
+lancedb
+pandas
+huggingface-hub
+# llama-cpp-python will be installed manually in setup-dev.sh for GPU args

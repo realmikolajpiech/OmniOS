@@ -1,0 +1,13 @@
+[Unit]
+Description=Omni AI Brain Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/miki/OmniOS
+ExecStart=/bin/bash -c 'source .venv/bin/activate && python3 src/brain.py'
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target

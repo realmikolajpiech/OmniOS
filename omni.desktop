@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Omni
+Comment=Universal Search & AI
+Exec=/home/miki/OmniOS/start.sh
+Icon=/home/miki/OmniOS/assets/omni-logo.png
+Type=Application
+Categories=Utility;
+Terminal=false
+StartupNotify=true
