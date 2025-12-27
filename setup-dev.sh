@@ -53,6 +53,13 @@ mkdir -p ~/.local/bin
 ln -sf "$REPO_DIR/start.sh" ~/.local/bin/omni
 echo "Added 'omni' command to ~/.local/bin"
 
+# Ensure ~/.local/bin is in PATH
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    echo "Adding ~/.local/bin to PATH in ~/.bashrc..."
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    echo "Please run 'source ~/.bashrc' or restart your terminal to use the 'omni' command."
+fi
+
 # Desktop Entry - Update paths dynamically
 DESKTOP_ENTRY_FILE="$REPO_DIR/omni.desktop"
 if [ -f "$DESKTOP_ENTRY_FILE" ]; then
