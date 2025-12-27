@@ -1,9 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "Setup OmniOS dev environment..."
+# Get the directory where the script is located
+REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# 1. System Dependencies (Pop!_OS / Ubuntu)
+echo "Setup OmniOS dev environment in $REPO_DIR..."
+
 # 1. System Dependencies (Pop!_OS / Ubuntu)
 echo "Installing system dependencies..."
 sudo apt update
@@ -13,15 +15,15 @@ sudo apt install -y python3-venv python3-pip fd-find dex cmake \
 
 # 2. Virtual Env & Python Deps
 echo "Setting up Python environment..."
-if [ ! -d ".venv" ]; then
-    python3 -m venv .venv
+if [ ! -d "$REPO_DIR/.venv" ]; then
+    python3 -m venv "$REPO_DIR/.venv"
 fi
-source .venv/bin/activate
+source "$REPO_DIR/.venv/bin/activate"
 
 echo "Installing generic requirements..."
 # Install CPU-only torch to avoid CUDA version conflicts (Embeddings are fast on CPU)
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+pip install -r "$REPO_DIR/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 3. Llama.cpp with CUDA (Pre-built Wheel)
 echo "Installing llama-cpp-python with CUDA support (Pre-built)..."
@@ -48,18 +50,33 @@ echo "Configuring System Integration..."
 
 # CLI Alias
 mkdir -p ~/.local/bin
-ln -sf /home/miki/OmniOS/start.sh ~/.local/bin/omni
+ln -sf "$REPO_DIR/start.sh" ~/.local/bin/omni
 echo "Added 'omni' command to ~/.local/bin"
 
-# Desktop Entry
-cp /home/miki/OmniOS/omni.desktop ~/.local/share/applications/
-chmod +x ~/.local/share/applications/omni.desktop
-update-desktop-database ~/.local/share/applications/ || true
+# Desktop Entry - Update paths dynamically
+DESKTOP_ENTRY_FILE="$REPO_DIR/omni.desktop"
+if [ -f "$DESKTOP_ENTRY_FILE" ]; then
+    echo "Installing Desktop Entry..."
+    sed "s|/home/miki/OmniOS|$REPO_DIR|g" "$DESKTOP_ENTRY_FILE" > ~/.local/share/applications/omni.desktop
+    chmod +x ~/.local/share/applications/omni.desktop
+    update-desktop-database ~/.local/share/applications/ || true
+fi
+
+# Systemd Service - Update paths dynamically
+SERVICE_FILE="$REPO_DIR/omni-brain.service"
+if [ -f "$SERVICE_FILE" ]; then
+    echo "Installing Systemd Brain Service..."
+    mkdir -p ~/.config/systemd/user/
+    sed "s|/home/miki/OmniOS|$REPO_DIR|g" "$SERVICE_FILE" > ~/.config/systemd/user/omni-brain.service
+    systemctl --user daemon-reload
+    systemctl --user enable omni-brain
+    systemctl --user start omni-brain
+fi
 
 # COSMIC Keybindings & Config Sync
 echo "Syncing COSMIC Configuration..."
 COSMIC_CONFIG_DIR="$HOME/.config/cosmic/com.system76.CosmicComp/v1"
-REPO_CONFIG_FILE="/home/miki/OmniOS/config/cosmic/com.system76.CosmicComp/v1/config.ron"
+REPO_CONFIG_FILE="$REPO_DIR/config/cosmic/com.system76.CosmicComp/v1/config.ron"
 
 if [ -f "$REPO_CONFIG_FILE" ]; then
     mkdir -p "$COSMIC_CONFIG_DIR"
@@ -91,3 +108,4 @@ echo "--------------------------------------------------------"
 echo "Setup Complete!"
 echo "To start Omni, run: omni (or press Super key)"
 echo "--------------------------------------------------------"
+

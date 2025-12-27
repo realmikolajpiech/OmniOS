@@ -71,11 +71,12 @@ check_and_handle_existing_instance()
 
 # CONFIG
 BRAIN_URL = "http://127.0.0.1:5500/ask"
-LOGO_PATH = os.environ.get("OMNI_LOGO", "/home/miki/OmniOS/assets/omni-logo.png")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+LOGO_PATH = os.environ.get("OMNI_LOGO", os.path.join(PROJECT_ROOT, "assets/omni-logo.png"))
 
 # --- DESIGN SYSTEM ---
 # Default to local omni.css if env is not set
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STYLE_SHEET_PATH = os.environ.get("OMNI_STYLE", os.path.join(SCRIPT_DIR, "omni.css"))
 
 STYLE_SHEET = ""
